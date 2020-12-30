@@ -41,7 +41,7 @@ proc cmpVarChars*[N](a, b: VarChar[N]): int =
   let aVarintLen = readVu64(toOpenArray(array[N, byte](a), 0, maxVarIntLen - 1), aLen)
   var bLen: uint64
   let bVarintLen = readVu64(toOpenArray(array[N, byte](b), 0, maxVarIntLen - 1), bLen)
-  let minlen = min(min(int(aLen), N - aVarintLen), min(int(bLen), N - bVarintLen))
+  let minLen = min(min(int(aLen), N - aVarintLen), min(int(bLen), N - bVarintLen))
   result = cmpMem(unsafeAddr(array[N, byte](a)[aVarintLen]),
       unsafeAddr(array[N, byte](b)[bVarintLen]), minLen)
   if result == 0:

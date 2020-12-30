@@ -34,5 +34,5 @@ echo a # "Appear weak when you are strong, and strong when you are weak."
 
 ## Limitations
 
-- `add` can not be supported efficiently.
+- A `Varchar` is immutable. `add` can not be supported efficiently.
 - Do not use `N` less than `maxVarIntLen`.

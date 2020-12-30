@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "Antonis Geralis"
 description   = "Varchars for Nim"
 license       = "MIT"
@@ -8,6 +8,6 @@ license       = "MIT"
 # Dependencies
 requires "nim >= 1.5.1"
 
-# Optional dependencies:
+# Optional dependencies
 #requires "eminim"
 #requires "bingo"

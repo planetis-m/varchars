@@ -1,4 +1,4 @@
-import varchars, varchars/serialize, std/streams
+import varchars, varchars/serialize, std/streams, eminim
 
 block:
   let data = "Να φαίνεσαι αδύναμος όταν είσαι δυνατός και δυνατός όταν είσαι αδύναμος."
@@ -79,7 +79,7 @@ block: # zero length
   assert b >= a
 block:
   var s = newStringStream()
-  var data = toVarChar[20]("Hello world")
+  let data = toVarChar[20]("Hello world")
   s.storeBin(data)
   s.setPosition(0)
   var a: VarChar[20]
@@ -95,3 +95,26 @@ block:
   a.initFromBin(s)
   assert a == data
   assert a.toString == data.toString
+block:
+  var s = newStringStream()
+  let data = toVarChar[20]("Hello world")
+  s.storeJson(data)
+  s.setPosition(0)
+  let a = s.jsonTo(typeof data)
+  assert a == data
+  assert a.toString == data.toString
+block:
+  var s = newStringStream()
+  var data: VarChar[20]
+  s.storeJson(data)
+  s.setPosition(0)
+  let a = s.jsonTo(typeof data)
+  assert a == data
+  assert a.toString == data.toString
+block:
+  var s = newStringStream()
+  let data = toVarChar[20]("Hello world")
+  s.storeJson(data)
+  s.setPosition(0)
+  let a = s.jsonTo(string)
+  assert a == data.toString
