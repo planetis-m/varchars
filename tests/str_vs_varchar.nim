@@ -1,5 +1,5 @@
 import times, stats, strformat
-import ../varchars, algorithm, random
+import ".."/varchars, algorithm, random
 
 const
   DataLen = 100
@@ -10,6 +10,7 @@ type
     registered*, verified*: Time
     username*: VarChar[125]
     name*, surname*: VarChar[125]
+
   Customer2* = object
     registered*, verified*: Time
     username*: string
@@ -49,6 +50,11 @@ proc fakeName(maxLen: Natural): string =
   for i in 0 ..< result.len:
     result[i] = rand('A'..'Z')
 
+template modify(x, prc: untyped) =
+  for i in countdown(x.high, 1):
+    if rand(1.0) > 0.98:
+      x[i] = prc
+
 proc test1 =
   warmup()
   var data = newSeq[Customer1](DataLen)
@@ -56,7 +62,7 @@ proc test1 =
     data[i] = Customer1(registered: getTime(), username: toVarChar[125](fakeName(125)))
   var lastTime = data[^1].registered
   bench("Sort object with Varchar", MaxIter):
-    shuffle(data)
+    modify(data, Customer1(registered: getTime(), username: toVarChar[125](fakeName(125))))
     sort(data, proc (x, y: Customer1): int = cmpVarchars(x.username, y.username))
     lastTime = data[^1].registered
   echo lastTime
@@ -68,10 +74,12 @@ proc test2 =
     data[i] = Customer2(registered: getTime(), username: fakeName(125))
   var lastTime = data[^1].registered
   bench("Sort object with strings", MaxIter):
-    shuffle(data)
+    modify(data, Customer2(registered: getTime(), username: fakeName(125)))
     sort(data, proc (x, y: Customer2): int = cmp(x.username, y.username))
     lastTime = data[^1].registered
   echo lastTime
+
+# Benchmark heap containers with a single string-like type.
 
 proc test3 =
   warmup()
@@ -79,7 +87,7 @@ proc test3 =
   for i in 0 ..< DataLen:
     data[i] = toVarChar[125](fakeName(125))
   bench("Sort Varchar", MaxIter):
-    shuffle(data)
+    modify(data, toVarChar[125](fakeName(125)))
     sort(data, cmpVarchars[125])
 
 proc test4 =
@@ -88,8 +96,27 @@ proc test4 =
   for i in 0 ..< DataLen:
     data[i] = fakeName(125)
   bench("Sort string", MaxIter):
-    shuffle(data)
+    modify(data, fakeName(125))
     sort(data, cmp)
 
-test4()
+proc toArrayChar[N: static[int]](data: string): array[N, char] =
+  for i in 0 ..< min(N, data.len):
+    result[i] = data[i]
+
+proc cmpArrayChars[N: static[int]](x, y: array[N, char]): int =
+  result = cmpMem(unsafeAddr(x), unsafeAddr(y), N)
+
+proc test5 =
+  warmup()
+  var data = newSeq[array[125, char]](DataLen)
+  for i in 0 ..< DataLen:
+    data[i] = fakeName(125).toArrayChar[:125]
+  bench("Sort char arrays", MaxIter):
+    modify(data, fakeName(125).toArrayChar[:125])
+    sort(data, cmpArrayChars[125])
+
+test1()
+test2()
 test3()
+test4()
+test5()
