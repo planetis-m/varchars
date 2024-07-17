@@ -8,8 +8,8 @@ const
 type
   Customer1* = object
     registered*, verified*: Time
-    username*: VarChar[125]
-    name*, surname*: VarChar[125]
+    username*: Varchar[125]
+    name*, surname*: Varchar[125]
 
   Customer2* = object
     registered*, verified*: Time
@@ -59,10 +59,10 @@ proc test1 =
   warmup()
   var data = newSeq[Customer1](DataLen)
   for i in 0 ..< DataLen:
-    data[i] = Customer1(registered: getTime(), username: toVarChar[125](fakeName(125)))
+    data[i] = Customer1(registered: getTime(), username: toVarchar[125](fakeName(125)))
   var lastTime = data[^1].registered
   bench("Sort object with Varchar", MaxIter):
-    modify(data, Customer1(registered: getTime(), username: toVarChar[125](fakeName(125))))
+    modify(data, Customer1(registered: getTime(), username: toVarchar[125](fakeName(125))))
     sort(data, proc (x, y: Customer1): int = cmpVarchars(x.username, y.username))
     lastTime = data[^1].registered
   echo lastTime
@@ -83,11 +83,11 @@ proc test2 =
 
 proc test3 =
   warmup()
-  var data = newSeq[VarChar[125]](DataLen)
+  var data = newSeq[Varchar[125]](DataLen)
   for i in 0 ..< DataLen:
-    data[i] = toVarChar[125](fakeName(125))
+    data[i] = toVarchar[125](fakeName(125))
   bench("Sort Varchar", MaxIter):
-    modify(data, toVarChar[125](fakeName(125)))
+    modify(data, toVarchar[125](fakeName(125)))
     sort(data, cmpVarchars[125])
 
 proc test4 =
@@ -104,7 +104,7 @@ proc toArrayChar[N: static[int]](data: string): array[N, char] =
     result[i] = data[i]
 
 proc cmpArrayChars[N: static[int]](x, y: array[N, char]): int =
-  result = cmpMem(unsafeAddr(x), unsafeAddr(y), N)
+  result = cmpMem(addr x, addr y, N)
 
 proc test5 =
   warmup()

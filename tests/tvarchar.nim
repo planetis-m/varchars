@@ -2,13 +2,13 @@ import varchars
 
 block:
   let data = "Να φαίνεσαι αδύναμος όταν είσαι δυνατός και δυνατός όταν είσαι αδύναμος."
-  let a = toVarChar[134](data)
+  let a = toVarchar[134](data)
   assert a.toString == data
   assert a.len == len(data)
 block:
   let data = """Ο ασθενής είναι ο μεγαλύτερος κίνδυνος για τον υγιή. Δεν είναι από τον
 πιο δυνατό που γίνεται η ζημιά σε έναν δυνατό άνθρωπό, αλλά από τον πιο αδύναμο."""
-  let a = toVarChar[312](data)
+  let a = toVarchar[312](data)
   assert a.toString == data
   assert a.len == len(data)
 block:
@@ -28,25 +28,25 @@ block:
 τρελαίνεσαι;». Είναι πιθανό να επιδιώκει να κάνει κανείς περιουσία για όχι πιο σοβαρό
 λόγο από την επιθυμία να εξασφαλίσει το σεβασμό και την προσοχή ανθρώπων που διαφορετικά
 δεν θα τον πρόσεχαν καθόλου."""
-  let a = toVarChar[2400](data)
+  let a = toVarchar[2400](data)
   assert a.toString == data
   assert a.len == len(data)
 # block:
 #   let data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit nec."
-#   let a = toVarChar[60](data)
+#   let a = toVarchar[60](data)
 #   assert a.toString == data
 #   assert a.len == len(data)
 block:
   let
-    a = toVarChar[20]("Hello world")
-    b = toVarChar[20]("Hello world")
+    a = toVarchar[20]("Hello world")
+    b = toVarchar[20]("Hello world")
   assert a == b
   assert a <= b
   assert a >= b
 block:
   let
-    a = toVarChar[20]("Hello world")
-    b = toVarChar[20]("Hello worls")
+    a = toVarchar[20]("Hello world")
+    b = toVarchar[20]("Hello worls")
   assert a != b
   assert a <= b
   assert a < b
@@ -54,8 +54,8 @@ block:
   assert b >= a
 block:
   let
-    a = toVarChar[20]("Hello")
-    b = toVarChar[20]("Hello world")
+    a = toVarchar[20]("Hello")
+    b = toVarchar[20]("Hello world")
   assert a != b
   assert a <= b
   assert a < b
@@ -63,18 +63,18 @@ block:
   assert b >= a
 block:
   let
-    a = toVarChar[20]("Hello world")
-    b = toVarChar[20]("World")
+    a = toVarchar[20]("Hello world")
+    b = toVarchar[20]("World")
   assert a != b
   assert a <= b
   assert a < b
   assert b > a
   assert b >= a
 block: # zero length
-  var a: VarChar[20]
-  let b = toVarChar[20]("Hello world")
+  var a: Varchar[20]
+  let b = toVarchar[20]("Hello world")
   assert a.len == 0
-  let c = toVarChar[20]("")
+  let c = toVarchar[20]("")
   assert a == c
   assert a != b
   assert a <= b

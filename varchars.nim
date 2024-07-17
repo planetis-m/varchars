@@ -1,12 +1,12 @@
 import std/varints
 
 type
-  VarChar*[N: static[int]] = distinct array[N, byte] ## Do not use `N` less than `maxVarIntLen`
+  Varchar*[N: static[int]] = distinct array[N, byte] ## Do not use `N` less than `maxVarIntLen`
 
-template `@^`(x: VarChar): untyped =
+template `@^`(x: Varchar): untyped =
   array[N, byte](x)
 
-proc toVarChar*[N](data: string): VarChar[N] =
+proc toVarchar*[N](data: string): Varchar[N] =
   let varintLen = writeVu64(toOpenArray(@^result, 0, maxVarIntLen - 1),
       uint64(data.len))
   assert N - varintLen >= data.len
@@ -14,7 +14,7 @@ proc toVarChar*[N](data: string): VarChar[N] =
   #   @^result[i + varintLen] = byte(data[i])
   copyMem(addr @^result[varintLen], cstring(data), min(N - varintLen, data.len))
 
-proc toString*[N](x: VarChar[N]): string =
+proc toString*[N](x: Varchar[N]): string =
   var varint: uint64
   let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
   assert N - varintLen >= int(varint)
@@ -23,22 +23,12 @@ proc toString*[N](x: VarChar[N]): string =
   #   result[i] = char(@^x[i + varintLen])
   copyMem(cstring(result), addr @^x[varintLen], result.len)
 
-proc `$`*[N](x: VarChar[N]): string {.inline.} = toString(x)
+proc `$`*[N](x: Varchar[N]): string {.inline.} = toString(x)
 
 # Comparisons
-proc eqVarChars[N](a, b: VarChar[N]): bool =
-  var aLen: uint64
-  let aVarintLen = readVu64(toOpenArray(@^a, 0, maxVarIntLen - 1), aLen)
-  var bLen: uint64
-  let bVarintLen = readVu64(toOpenArray(@^b, 0, maxVarIntLen - 1), bLen)
-  if aLen == bLen:
-    if aLen == 0: return true
-    return equalMem(addr @^a[aVarintLen], addr @^b[bVarintLen],
-                    min(int(aLen), N - aVarintLen))
+proc `==`*[N](a, b: Varchar[N]): bool {.inline.} = @^a == @^b
 
-proc `==`*[N](a, b: VarChar[N]): bool {.inline.} = @^a == @^b # eqVarChars(a, b)
-
-proc cmpVarChars[N](a, b: VarChar[N]): int =
+proc cmpVarchars*[N](a, b: Varchar[N]): int =
   var aLen: uint64
   let aVarintLen = readVu64(toOpenArray(@^a, 0, maxVarIntLen - 1), aLen)
   var bLen: uint64
@@ -48,10 +38,10 @@ proc cmpVarChars[N](a, b: VarChar[N]): int =
   if result == 0:
     result = int(aLen) - int(bLen)
 
-proc `<=`*[N](a, b: VarChar[N]): bool {.inline.} = cmpVarChars(a, b) <= 0
-proc `<`*[N](a, b: VarChar[N]): bool {.inline.} = cmpVarChars(a, b) < 0
+proc `<=`*[N](a, b: Varchar[N]): bool {.inline.} = cmpVarchars(a, b) <= 0
+proc `<`*[N](a, b: Varchar[N]): bool {.inline.} = cmpVarchars(a, b) < 0
 
-proc len*[N](x: VarChar[N]): int =
+proc len*[N](x: Varchar[N]): int =
   var varint: uint64
   let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
   assert N - varintLen >= int(varint)
