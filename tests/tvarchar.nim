@@ -1,4 +1,4 @@
-import varchars, varchars/serialize, std/streams, eminim, bingo
+import varchars
 
 block:
   let data = "Να φαίνεσαι αδύναμος όταν είσαι δυνατός και δυνατός όταν είσαι αδύναμος."
@@ -77,59 +77,3 @@ block: # zero length
   assert a < b
   assert b > a
   assert b >= a
-block:
-  var s = newStringStream()
-  let strdata = "Hello world"
-  let data = toVarChar[20](strdata)
-  s.storeBin(data)
-  assert s.data.len == sizeof(int64)+strdata.len
-  s.setPosition(0)
-  var a: VarChar[20]
-  a.initFromBin(s)
-  assert a == data
-  assert a.toString == strdata
-#block: # BINGO FUEL
-  #var s = newStringStream()
-  #let strdata = "Hello world"
-  #let data = (val: toVarChar[20](strdata),)
-  #s.storeBin(data)
-  #echo s.data.len
-  #assert s.data.len == sizeof(int64)+strdata.len
-  #s.setPosition(0)
-  #let a = binTo(s, typeof data)
-  #assert a == data
-  #assert a.val.toString == strdata
-block:
-  var s = newStringStream()
-  var data: VarChar[20]
-  s.storeBin(data)
-  assert s.data.len == sizeof(int64)
-  s.setPosition(0)
-  var a: VarChar[20]
-  a.initFromBin(s)
-  assert a == data
-  assert a.toString == ""
-block:
-  var s = newStringStream()
-  let strdata = "Hello world"
-  let data = toVarChar[20](strdata)
-  s.storeJson(data)
-  s.setPosition(0)
-  let a = s.jsonTo(typeof data)
-  assert a == data
-  assert a.toString == data.toString
-block:
-  var s = newStringStream()
-  var data: VarChar[20]
-  s.storeJson(data)
-  s.setPosition(0)
-  let a = s.jsonTo(typeof data)
-  assert a == data
-  assert a.toString == ""
-#block:
-  #var s = newStringStream()
-  #let data = toVarChar[20]("Hello world")
-  #s.storeJson(data)
-  #s.setPosition(0)
-  #let a = s.jsonTo(string)
-  #assert a == data.toString

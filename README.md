@@ -1,38 +1,42 @@
-# Varchar data type
+# VarChar: Nim Implementation of Variable-Length Character Arrays
 
-A `VarChar` type is defined as:
+`VarChar[N]` is a pure Nim implementation of variable-length character arrays,
+mimicking the behavior of `varchar` in database systems.
+
+## Definition
 
 ```nim
 type
   VarChar*[N: static[int]] = distinct array[N, byte]
 ```
 
-> `varchar` or Variable Character Field is a set of character data of indeterminate length.
+## Features
 
-This is a pure Nim implementation of a `varchar` used as a data type of a field in a Database,
-that can hold alpha-numeric values. A `VarChar` can be of any length up to the limit `N`.
+- Stores alpha-numeric values of variable length up to a maximum of `N` bytes.
+- Encodes the string length at the start using `writeVu64` from `std/varints`.
+- Length encoding occupies 1 to `maxVarIntLen` bytes.
+- Supports comparison operations for sorting.
 
-Stores the length at the start of the array using `writeVu64` from the `std/varints` module.
-Length can occupy 1 to `maxVarIntLen` bytes.
-
-## Usage
+## Usage Example
 
 ```nim
-# Comparisons, needed for sorting
+import varchar
+
+# Creating and comparing VarChars
 let a = toVarChar[85]("Appear weak when you are strong")
-let b = toVarChar[85](", and strong when you are weak.")
+let b = toVarChar[85]("and strong when you are weak.")
 assert a == a
 assert a > b
 
 # Appending using an intermediate buffer
-var a = toVarChar[85]("Appear weak when you are strong")
-var buffer = $a
+var c = toVarChar[85]("Appear weak when you are strong")
+var buffer = $c
 buffer.add ", and strong when you are weak."
-a = toVarChar(buffer)
-echo a # "Appear weak when you are strong, and strong when you are weak."
+c = toVarChar[85](buffer)
+echo c # Outputs: "Appear weak when you are strong, and strong when you are weak."
 ```
 
 ## Limitations
 
-- A `Varchar` is immutable. `add` can not be supported efficiently.
-- Do not use `N` less than `maxVarIntLen`.
+1. Immutability: `VarChar` instances are immutable. Direct `add` operations are not supported.
+2. Minimum Size: `N` must not be less than `maxVarIntLen`.
