@@ -8,8 +8,8 @@ const
 type
   Customer1* = object
     registered*, verified*: Time
-    username*: Varchar[125]
-    name*, surname*: Varchar[125]
+    username*: Varchar[126]
+    name*, surname*: Varchar[126]
 
   Customer2* = object
     registered*, verified*: Time
@@ -59,10 +59,10 @@ proc test1 =
   warmup()
   var data = newSeq[Customer1](DataLen)
   for i in 0 ..< DataLen:
-    data[i] = Customer1(registered: getTime(), username: toVarchar[125](fakeName(125)))
+    data[i] = Customer1(registered: getTime(), username: toVarchar[126](fakeName(125)))
   var lastTime = data[^1].registered
   bench("Sort object with Varchar", MaxIter):
-    modify(data, Customer1(registered: getTime(), username: toVarchar[125](fakeName(125))))
+    modify(data, Customer1(registered: getTime(), username: toVarchar[126](fakeName(125))))
     sort(data, proc (x, y: Customer1): int = cmpVarchars(x.username, y.username))
     lastTime = data[^1].registered
   echo lastTime
@@ -83,12 +83,12 @@ proc test2 =
 
 proc test3 =
   warmup()
-  var data = newSeq[Varchar[125]](DataLen)
+  var data = newSeq[Varchar[126]](DataLen)
   for i in 0 ..< DataLen:
-    data[i] = toVarchar[125](fakeName(125))
+    data[i] = toVarchar[126](fakeName(125))
   bench("Sort Varchar", MaxIter):
-    modify(data, toVarchar[125](fakeName(125)))
-    sort(data, cmpVarchars[125])
+    modify(data, toVarchar[126](fakeName(125)))
+    sort(data, cmpVarchars[126])
 
 proc test4 =
   warmup()
