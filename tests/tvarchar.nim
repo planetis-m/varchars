@@ -4,11 +4,13 @@ block:
   let data = "Να φαίνεσαι αδύναμος όταν είσαι δυνατός και δυνατός όταν είσαι αδύναμος."
   let a = toVarChar[134](data)
   assert a.toString == data
+  assert a.len == len(data)
 block:
   let data = """Ο ασθενής είναι ο μεγαλύτερος κίνδυνος για τον υγιή. Δεν είναι από τον
 πιο δυνατό που γίνεται η ζημιά σε έναν δυνατό άνθρωπό, αλλά από τον πιο αδύναμο."""
   let a = toVarChar[312](data)
   assert a.toString == data
+  assert a.len == len(data)
 block:
   let data = """Όπως και όλοι οι άλλοι, είμαι αδύναμος, οργισμένος και παραπλανημένος.
 Είναι αυτή η αδυναμία που με κάνει συμπονετικό και με συνδέει με όλους τους ζωντανούς
@@ -28,10 +30,12 @@ block:
 δεν θα τον πρόσεχαν καθόλου."""
   let a = toVarChar[2400](data)
   assert a.toString == data
-#block:
-  #let data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit nec."
-  #let a = toVarChar[60](data)
-  #assert a.toString == data
+  assert a.len == len(data)
+# block:
+#   let data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit nec."
+#   let a = toVarChar[60](data)
+#   assert a.toString == data
+#   assert a.len == len(data)
 block:
   let
     a = toVarChar[20]("Hello world")
@@ -69,7 +73,7 @@ block:
 block: # zero length
   var a: VarChar[20]
   let b = toVarChar[20]("Hello world")
-  assert a.toString.len == 0
+  assert a.len == 0
   let c = toVarChar[20]("")
   assert a == c
   assert a != b
