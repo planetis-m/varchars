@@ -18,7 +18,7 @@ proc toString*[N](x: Varchar[N]): string =
   var varint: uint64
   let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
   assert N - varintLen >= int(varint)
-  result = newString(min(int(varint), N - varintLen))
+  result = newStringUninit(min(int(varint), N - varintLen))
   # for i in 0 ..< result.len:
   #   result[i] = char(@^x[i + varintLen])
   copyMem(cstring(result), addr @^x[varintLen], result.len)
@@ -44,5 +44,4 @@ proc `<`*[N](a, b: Varchar[N]): bool {.inline.} = cmpVarchars(a, b) < 0
 proc len*[N](x: Varchar[N]): int =
   var varint: uint64
   let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
-  assert N - varintLen >= int(varint)
-  result = int(varint)
+  result = min(int(varint), N - varintLen)
