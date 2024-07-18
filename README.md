@@ -14,7 +14,7 @@ type
 
 - Stores alpha-numeric values of variable length up to a maximum of `N` bytes.
 - Encodes the string length at the start using `writeVu64` from `std/varints`.
-- Length encoding occupies 1 to `maxVarIntLen` bytes.
+- Length encoding occupies 1 to `maxVarIntLen` bytes (9).
 - Supports comparison operations for sorting.
 
 ## Usage Example

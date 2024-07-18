@@ -7,6 +7,7 @@ template `@^`(x: Varchar): untyped =
   array[N, byte](x)
 
 proc toVarchar*[N](data: string): Varchar[N] =
+  static: assert N >= maxVarIntLen
   let varintLen = writeVu64(toOpenArray(@^result, 0, maxVarIntLen - 1),
       uint64(data.len))
   assert N - varintLen >= data.len
@@ -15,6 +16,7 @@ proc toVarchar*[N](data: string): Varchar[N] =
   copyMem(addr @^result[varintLen], cstring(data), min(N - varintLen, data.len))
 
 proc toString*[N](x: Varchar[N]): string =
+  static: assert N >= maxVarIntLen
   var varint: uint64
   let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
   assert N - varintLen >= int(varint)
