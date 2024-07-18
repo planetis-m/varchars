@@ -86,6 +86,8 @@ iterator items*[N](a: Varchar[N]): char {.inline.} =
 
 template toOpenArray*[N](s: Varchar[N]; first, last: int): untyped =
   readVarcharLen(s, N, varint, varintLen, L)
+  checkBounds(first, L)
+  checkBounds(last, L)
   toOpenArray(cast[cstring](addr @^s[varintLen]), first, last)
 
 template toOpenArray*[N](s: Varchar[N]): untyped =
