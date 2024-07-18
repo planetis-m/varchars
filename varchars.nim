@@ -21,7 +21,6 @@ proc toVarchar*[N](data: string): Varchar[N] =
   copyMem(addr @^result[varintLen], cstring(data), min(N - varintLen, data.len))
 
 proc toString*[N](x: Varchar[N]): string =
-  static: assert N >= maxVarIntLen
   readVarcharLen(x, varint, varintLen, len)
   assert N - varintLen >= int(varint)
   result = newStringUninit(len)
@@ -85,11 +84,11 @@ iterator items*[N](a: Varchar[N]): char {.inline.} =
     yield char(@^a[varintLen + i])
     inc(i)
 
-template toOpenArray*[N](s: Varchar[N]; first, last: int): untyped =
+template toOpenArray*(s: Varchar; first, last: int): untyped =
   readVarcharLen(s, varint, varintLen, L)
   toOpenArray(cast[cstring](addr @^s[varintLen]), first, last)
 
-template toOpenArray*[N](s: Varchar[N]): untyped =
+template toOpenArray*(s: Varchar): untyped =
   readVarcharLen(s, varint, varintLen, L)
   toOpenArray(cast[cstring](addr @^s[varintLen]), 0, L-1)
 
