@@ -5,12 +5,14 @@ block:
   let a = toVarchar[134](data)
   assert a.toString == data
   assert a.len == len(data)
+  assert toOpenArray(a) == data
 block:
   let data = """Ο ασθενής είναι ο μεγαλύτερος κίνδυνος για τον υγιή. Δεν είναι από τον
 πιο δυνατό που γίνεται η ζημιά σε έναν δυνατό άνθρωπό, αλλά από τον πιο αδύναμο."""
   let a = toVarchar[312](data)
   assert a.toString == data
   assert a.len == len(data)
+  assert toOpenArray(a) == data
 block:
   let data = """Όπως και όλοι οι άλλοι, είμαι αδύναμος, οργισμένος και παραπλανημένος.
 Είναι αυτή η αδυναμία που με κάνει συμπονετικό και με συνδέει με όλους τους ζωντανούς
@@ -31,6 +33,7 @@ block:
   let a = toVarchar[2400](data)
   assert a.toString == data
   assert a.len == len(data)
+  assert toOpenArray(a) == data
 # block:
 #   let data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit nec."
 #   let a = toVarchar[60](data)
@@ -75,6 +78,8 @@ block:
   assert b > a
   assert b >= a
   assert hash(a) != hash(b)
+  assert toOpenArray(a) == "Hello"
+  assert toOpenArray(a, 0, 4) == "Hello"
   a[0] = 'w'
   a[1] = 'o'
   a[2] = 'r'
@@ -95,6 +100,8 @@ block:
   assert b > a
   assert b >= a
   assert hash(a) != hash(b)
+  assert toOpenArray(b) == "World"
+  assert toOpenArray(b, 0, 4) == "World"
   b[^5] = 'h'
   b[^4] = 'e'
   b[^3] = 'l'
