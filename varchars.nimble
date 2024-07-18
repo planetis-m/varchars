@@ -1,12 +1,12 @@
 # Package
 
-version       = "0.2.0"
+version       = "1.0.0"
 author        = "Antonis Geralis"
 description   = "Varchars for Nim"
 license       = "MIT"
 
 # Dependencies
-requires "nim >= 1.5.1"
+requires "nim >= 2.2.0"
 
 # Optional dependencies
 #requires "eminim"
