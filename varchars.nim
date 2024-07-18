@@ -1,4 +1,4 @@
-import std/varints
+import std/[hashes, varints]
 
 type
   Varchar*[N: static[int]] = distinct array[N, byte] ## Do not use `N` less than `maxVarIntLen`
@@ -45,3 +45,60 @@ proc len*[N](x: Varchar[N]): int =
   var varint: uint64
   let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
   result = min(int(varint), N - varintLen)
+
+proc raiseIndexDefect(i, n: int) {.noinline, noreturn.} =
+  raise newException(IndexDefect, "index " & $i & " not in 0 .. " & $n)
+
+template checkBounds(i, n) =
+  when compileOption("boundChecks"):
+    {.line.}:
+      if i < 0 or i >= n:
+        raiseIndexDefect(i, n-1)
+
+proc `[]`*[N](x: Varchar[N]; i: int): char {.inline.} =
+  var varint: uint64
+  let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
+  checkBounds(i, min(int(varint), N - varintLen))
+  char(@^x[varintLen + i])
+
+proc `[]=`*[N](x: var Varchar[N]; i: int; val: char) {.inline.} =
+  var varint: uint64
+  let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
+  checkBounds(i, min(int(varint), N - varintLen))
+  @^x[varintLen + i] = byte(val)
+
+proc `[]`*[N](x: Varchar[N]; i: BackwardsIndex): char {.inline.} =
+  var varint: uint64
+  let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
+  let len = min(int(varint), N - varintLen)
+  checkBounds(len - i.int, len)
+  char(@^x[varintLen + len - i.int])
+
+proc `[]=`*[N](x: var Varchar[N]; i: BackwardsIndex; val: char) {.inline.} =
+  var varint: uint64
+  let varintLen = readVu64(toOpenArray(@^x, 0, maxVarIntLen - 1), varint)
+  let len = min(int(varint), N - varintLen)
+  checkBounds(len - i.int, len)
+  @^x[varintLen + len - i.int] = byte(val)
+
+iterator items*[N](a: Varchar[N]): char {.inline.} =
+  var i = 0
+  var varint: uint64
+  let varintLen = readVu64(toOpenArray(@^a, 0, maxVarIntLen - 1), varint)
+  let L = min(int(varint), N - varintLen)
+  while i < L:
+    yield char(@^a[varintLen + i])
+    inc(i)
+
+template toOpenArray*[N](s: Varchar[N]; first, last: int): untyped =
+  var varint: uint64
+  let varintLen = readVu64(toOpenArray(@^s, 0, maxVarIntLen - 1), varint)
+  toOpenArray(cast[cstring](addr @^s[varintLen]), first, last)
+
+template toOpenArray*[N](s: Varchar[N]): untyped =
+  var varint: uint64
+  let varintLen = readVu64(toOpenArray(@^s, 0, maxVarIntLen - 1), varint)
+  toOpenArray(cast[cstring](addr @^s[varintLen]), 0, min(int(varint), N - varintLen)-1)
+
+proc hash*[N](x: Varchar[N]): Hash =
+  hash(toOpenArray(x))

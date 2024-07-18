@@ -40,9 +40,21 @@ block:
   let
     a = toVarchar[20]("Hello world")
     b = toVarchar[20]("Hello world")
+  assert a[0] == 'H'
+  assert a[1] == 'e'
+  assert a[2] == 'l'
+  assert a[3] == 'l'
+  assert a[4] == 'o'
+  assert a[5] == ' '
+  assert a[^5] == 'w'
+  assert a[^4] == 'o'
+  assert a[^3] == 'r'
+  assert a[^2] == 'l'
+  assert a[^1] == 'd'
   assert a == b
   assert a <= b
   assert a >= b
+  assert hash(a) == hash(b)
 block:
   let
     a = toVarchar[20]("Hello world")
@@ -52,8 +64,9 @@ block:
   assert a < b
   assert b > a
   assert b >= a
+  assert hash(a) != hash(b)
 block:
-  let
+  var
     a = toVarchar[20]("Hello")
     b = toVarchar[20]("Hello world")
   assert a != b
@@ -61,8 +74,19 @@ block:
   assert a < b
   assert b > a
   assert b >= a
+  assert hash(a) != hash(b)
+  a[0] = 'w'
+  a[1] = 'o'
+  a[2] = 'r'
+  a[3] = 'l'
+  a[4] = 'd'
+  assert a[^5] == 'w'
+  assert a[^4] == 'o'
+  assert a[^3] == 'r'
+  assert a[^2] == 'l'
+  assert a[^1] == 'd'
 block:
-  let
+  var
     a = toVarchar[20]("Hello world")
     b = toVarchar[20]("World")
   assert a != b
@@ -70,6 +94,17 @@ block:
   assert a < b
   assert b > a
   assert b >= a
+  assert hash(a) != hash(b)
+  b[^5] = 'h'
+  b[^4] = 'e'
+  b[^3] = 'l'
+  b[^2] = 'l'
+  b[^1] = 'o'
+  assert b[0] == 'h'
+  assert b[1] == 'e'
+  assert b[2] == 'l'
+  assert b[3] == 'l'
+  assert b[4] == 'o'
 block: # zero length
   var a: Varchar[20]
   let b = toVarchar[20]("Hello world")
@@ -81,3 +116,8 @@ block: # zero length
   assert a < b
   assert b > a
   assert b >= a
+  var s = ""
+  for c in b.items:
+    s.add c
+  assert s == "Hello world"
+  assert hash(a) != hash(b)
