@@ -33,7 +33,7 @@ proc `$`*[N](x: Varchar[N]): string {.inline.} = toString(x)
 # Comparisons
 proc `==`*[N](a, b: Varchar[N]): bool {.inline.} = @^a == @^b
 
-proc cmpVarchars*[N](a, b: Varchar[N]): int =
+proc cmp*[N](a, b: Varchar[N]): int =
   readVarcharLen(a, aVarint, aVarintLen, aLen)
   readVarcharLen(b, bVarint, bVarintLen, bLen)
   let minLen = min(aLen, bLen)
@@ -41,8 +41,8 @@ proc cmpVarchars*[N](a, b: Varchar[N]): int =
   if result == 0:
     result = int(aVarint) - int(bVarint)
 
-proc `<=`*[N](a, b: Varchar[N]): bool {.inline.} = cmpVarchars(a, b) <= 0
-proc `<`*[N](a, b: Varchar[N]): bool {.inline.} = cmpVarchars(a, b) < 0
+proc `<=`*[N](a, b: Varchar[N]): bool {.inline.} = cmp(a, b) <= 0
+proc `<`*[N](a, b: Varchar[N]): bool {.inline.} = cmp(a, b) < 0
 
 proc len*[N](x: Varchar[N]): int =
   readVarcharLen(x, varint, varintLen, len)

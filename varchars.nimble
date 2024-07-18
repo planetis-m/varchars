@@ -6,7 +6,7 @@ description   = "Varchars for Nim"
 license       = "MIT"
 
 # Dependencies
-requires "nim >= 2.2.0"
+requires "nim >= 2.1.9"
 
 # Optional dependencies
 #requires "eminim"

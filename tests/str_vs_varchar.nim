@@ -63,7 +63,7 @@ proc test1 =
   var lastTime = data[^1].registered
   bench("Sort object with Varchar", MaxIter):
     modify(data, Customer1(registered: getTime(), username: toVarchar[126](fakeName(125))))
-    sort(data, proc (x, y: Customer1): int = cmpVarchars(x.username, y.username))
+    sort(data, proc (x, y: Customer1): int = cmp(x.username, y.username))
     lastTime = data[^1].registered
   echo lastTime
 
@@ -88,7 +88,7 @@ proc test3 =
     data[i] = toVarchar[126](fakeName(125))
   bench("Sort Varchar", MaxIter):
     modify(data, toVarchar[126](fakeName(125)))
-    sort(data, cmpVarchars[126])
+    sort(data, cmp[126])
 
 proc test4 =
   warmup()
